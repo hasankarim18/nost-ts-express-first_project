@@ -1,10 +1,25 @@
 import { Request, Response } from 'express'
 import { studentServices } from './student.service'
 
+import studentValidationSchema from './student.validation'
+
 const createStudent = async (req: Request, res: Response) => {
   try {
+    // creating a schema validation using joi
+
     // send response
     const { student: studentData } = req.body
+
+    const { error } = studentValidationSchema.validate(studentData)
+
+    if (error) {
+      res.status(400).json({
+        success: false,
+        message: 'somthing went wrong in joi',
+        error: error.details,
+      })
+    }
+
     // will call service to functin to send this data
     const result = await studentServices.createStudentIntoDb(studentData)
 
@@ -15,10 +30,15 @@ const createStudent = async (req: Request, res: Response) => {
       data: result,
     })
   } catch (error) {
-    res.status(400).json({
-      success: false,
-      message: 'Student is creation unsuccessful',
-    })
+    // console.log(error)
+    // const { message } = error
+    if (error instanceof Error) {
+      const { message } = error
+      res.status(400).json({
+        success: false,
+        message: ` ${message}}}`,
+      })
+    }
   }
 }
 

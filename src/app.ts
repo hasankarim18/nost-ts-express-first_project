@@ -18,7 +18,7 @@ const getHelloController = (req: Request, res: Response) => {
   // const a = 1
 
   res.send({
-    message: 'Hello world',
+    message: 'Hello world, how are you',
   })
 }
 
