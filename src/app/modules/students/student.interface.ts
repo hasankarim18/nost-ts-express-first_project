@@ -2,7 +2,7 @@
 
 export type UserName = {
   firstName: string
-  middleName: string
+  middleName?: string
   lastName: string
 }
 
@@ -25,7 +25,7 @@ export type LocalGuardian = {
 export type Student = {
   id: string
   name: UserName
-  gender: 'male' | 'female' // union type literal gender must be either "male" or "female"
+  gender: 'male' | 'female' | 'other' // union type literal gender must be either "male" or "female"
   email: string
   phone: string
   bloodGroup?: {

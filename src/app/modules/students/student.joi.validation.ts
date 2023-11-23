@@ -1,3 +1,4 @@
+/*
 import Joi from 'joi'
 
 const userNameValidationSchema = Joi.object({
@@ -53,3 +54,5 @@ const studentValidationSchema = Joi.object({
 })
 
 export default studentValidationSchema
+
+*/

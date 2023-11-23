@@ -1,6 +1,6 @@
 import { Schema, model } from 'mongoose'
 import { Guardian, LocalGuardian, Student, UserName } from './student.interface'
-import validator from 'validator'
+// import validator from 'validator'
 
 /***************************
  *  Schema and model
