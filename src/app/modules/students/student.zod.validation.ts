@@ -59,6 +59,9 @@ const BloodGroupValidationSchema = z.object({
 // Define a schema for the entire Student
 export const StudentValidationSchema = z.object({
   id: z.string().min(1, { message: 'Student ID is required' }),
+  password: z
+    .string()
+    .max(20, { message: 'Zod says password can not be more than 20' }),
   name: UserNameValidationSchema.required(),
   gender: z.enum(['male', 'female', 'other']),
   email: z.string().email({ message: 'Email is not valid' }),
@@ -72,6 +75,7 @@ export const StudentValidationSchema = z.object({
   localGuardian: LocalGuardianValidationSchema.required(),
   profileImg: z.string(),
   isActive: z.enum(['active', 'inactive']).default('active'),
+  isDeleted: z.boolean(),
 })
 
 export default StudentValidationSchema

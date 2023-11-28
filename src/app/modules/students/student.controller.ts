@@ -1,53 +1,42 @@
-import { Request, Response } from 'express'
+import { NextFunction, Request, Response } from 'express'
 import { studentServices } from './student.service'
-import studentValidationSchema from './student.zod.validation'
+// import studentValidationSchema from './student.zod.validation'
 
-const createStudent = async (req: Request, res: Response) => {
+// get single student
+
+const getSingleStudent = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
   try {
-    // creating a schema validation using joi
-
-    // send response
-
-    /**   // data validation using Joi
-    const { error, value } = studentValidationSchema.validate(studentData)
-    if (error) {
-      res.status(400).json({
+    const { studentId } = req.params
+    const result = await studentServices.getSingleStudentFromDb(studentId)
+    //  console.log(result)
+    if (result === null || undefined) {
+      res.status(404).send({
         success: false,
-        message: 'somthing went wrong in joi',
-        error: error.details,
+        message: 'Student Not Existed',
+        data: result,
       })
     }
-    // validate using joi ends **/
 
-    // will call service to functin to send this dataa
-
-    /******************creating schema validation using zod *********************************/
-
-    const { student: studentData } = req.body
-    const zodParseData = studentValidationSchema.parse(studentData)
-
-    const result = await studentServices.createStudentIntoDb(zodParseData)
-
-    // response
-    res.status(200).json({
+    res.status(200).send({
       success: true,
-      message: 'Student is created successfully',
+      message: 'Student Find Successfully',
       data: result,
+      dataType: typeof result,
     })
   } catch (error) {
-    // console.log(error)
-    // const { message } = error
-    if (error instanceof Error) {
-      const { message } = error
-      res.status(400).json({
-        success: false,
-        message: ` ${message}}}`,
-      })
-    }
+    next(error)
   }
 }
 
-const getAllStudents = async (req: Request, res: Response) => {
+const getAllStudents = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
   try {
     const result = await studentServices.getAllStudentsFromDb()
     res.status(200).send({
@@ -56,34 +45,30 @@ const getAllStudents = async (req: Request, res: Response) => {
       data: result,
     })
   } catch (error) {
-    res.status(400).json({
-      success: false,
-      message: 'Failed to fetch student data',
-    })
+    next(error)
   }
 }
 
-// get single student
-
-const getSingleStudent = async (req: Request, res: Response) => {
+const deleteStudent = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
   try {
     const { studentId } = req.params
-    const result = await studentServices.getSingleStudentFromDb(studentId)
+    const result = await studentServices.deleteSingleStudentFromDb(studentId)
     res.status(200).send({
       success: true,
-      message: 'Student Find Successfully',
+      message: 'Student delete Successfully',
       data: result,
     })
   } catch (error) {
-    res.status(400).json({
-      success: false,
-      message: 'Failed to fetch student data',
-    })
+    next(error)
   }
 }
 
 export const studentController = {
-  createStudent,
   getAllStudents,
   getSingleStudent,
+  deleteStudent,
 }

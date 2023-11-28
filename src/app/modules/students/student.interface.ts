@@ -1,12 +1,13 @@
-// import { Schema, model, connect } from 'mongoose'
+// import { Schema, model, connect } from 'mongoose'} from 'mongodb'
+import { Model, Types } from 'mongoose'
 
-export type UserName = {
+export type TUserName = {
   firstName: string
   middleName?: string
   lastName: string
 }
 
-export type Guardian = {
+export type TGuardian = {
   fatherName: string
   fatherOcupation: string
   fatherContact: string
@@ -15,16 +16,18 @@ export type Guardian = {
   motherContact: string
 }
 
-export type LocalGuardian = {
+export type TLocalGuardian = {
   name: string
   address: string
   occupation: string
   contact: string
 }
 
-export type Student = {
+export type TStudent = {
   id: string
-  name: UserName
+  user: Types.ObjectId
+  //  password: string
+  name: TUserName
   gender: 'male' | 'female' | 'other' // union type literal gender must be either "male" or "female"
   email: string
   phone: string
@@ -34,8 +37,26 @@ export type Student = {
   }
   presentAddress: string
   permanantAddress: string
-  guardian: Guardian
-  localGuardian: LocalGuardian
+  guardian: TGuardian
+  localGuardian: TLocalGuardian
   profileImg?: string
-  isActive: 'active' | 'inactive'
+  isDeleted: boolean
 }
+
+/** For creating static */
+
+// export interface StudentModel extends Model<TStudent> {
+//   isUserExists(id: string): Promise<TStudent | null>
+// }
+
+/** For creating instance */
+export type StudentMethods = {
+  // eslint-disable-next-line no-unused-vars
+  isUserExists(id: string): Promise<TStudent | null>
+}
+
+export type StudentModel = Model<
+  TStudent,
+  Record<string, never>,
+  StudentMethods
+>
