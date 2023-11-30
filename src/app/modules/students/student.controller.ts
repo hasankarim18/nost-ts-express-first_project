@@ -1,71 +1,54 @@
-import { NextFunction, Request, Response } from 'express'
 import { studentServices } from './student.service'
-// import studentValidationSchema from './student.zod.validation'
+import sendResponse from '../../utils/sendResponse'
+import httpStatus from 'http-status'
+import catchAsync from '../../utils/catAsync'
 
-// get single student
+// writting a higher order asynchronous code for try catch
 
-const getSingleStudent = async (
-  req: Request,
-  res: Response,
-  next: NextFunction,
-) => {
-  try {
-    const { studentId } = req.params
-    const result = await studentServices.getSingleStudentFromDb(studentId)
-    //  console.log(result)
-    if (result === null || undefined) {
-      res.status(404).send({
-        success: false,
-        message: 'Student Not Existed',
-        data: result,
-      })
-    }
+// eslint-disable-next-line @typescript-eslint/no-unused-vars, no-unused-vars
+const getSingleStudent = catchAsync(async (req, res, next) => {
+  const { studentId } = req.params
+  const result = await studentServices.getSingleStudentFromDb(studentId)
 
-    res.status(200).send({
-      success: true,
-      message: 'Student Find Successfully',
-      data: result,
-      dataType: typeof result,
-    })
-  } catch (error) {
-    next(error)
-  }
-}
-
-const getAllStudents = async (
-  req: Request,
-  res: Response,
-  next: NextFunction,
-) => {
-  try {
-    const result = await studentServices.getAllStudentsFromDb()
-    res.status(200).send({
-      success: true,
-      message: 'Student Find Successfully',
+  //  console.log(result)
+  if (result === null || undefined || result.length === 0) {
+    res.status(404).send({
+      success: false,
+      message: 'Student Not Existed',
       data: result,
     })
-  } catch (error) {
-    next(error)
   }
-}
 
-const deleteStudent = async (
-  req: Request,
-  res: Response,
-  next: NextFunction,
-) => {
-  try {
-    const { studentId } = req.params
-    const result = await studentServices.deleteSingleStudentFromDb(studentId)
-    res.status(200).send({
-      success: true,
-      message: 'Student delete Successfully',
-      data: result,
-    })
-  } catch (error) {
-    next(error)
-  }
-}
+  res.status(200).send({
+    success: true,
+    message: 'Student Find Successfully',
+    data: result,
+    dataType: typeof result,
+  })
+})
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars, no-unused-vars
+const getAllStudents = catchAsync(async (req, res, next) => {
+  const result = await studentServices.getAllStudentsFromDb()
+  sendResponse(res, {
+    success: true,
+    statusCode: httpStatus.OK,
+    message: 'All Student found Successfully',
+    data: result,
+  })
+})
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars, no-unused-vars
+const deleteStudent = catchAsync(async (req, res, next) => {
+  const { studentId } = req.params
+  const result = await studentServices.deleteSingleStudentFromDb(studentId)
+  sendResponse(res, {
+    success: true,
+    statusCode: httpStatus.OK,
+    message: 'Student delete Successfully',
+    data: result,
+  })
+})
 
 export const studentController = {
   getAllStudents,

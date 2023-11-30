@@ -6,6 +6,8 @@ import cors from 'cors'
 import { StudentRoutes } from './app/modules/students/student.route'
 import { UserRoutes } from './app/modules/user/user.route'
 import globalErrorHandler from './app/middlewares/globalErrorHandler'
+import notFound from './app/middlewares/notFound'
+import router from './app/routes'
 const app: Application = express()
 
 // parser
@@ -16,9 +18,12 @@ app.use(cors())
  * Application Routes
  */
 
-app.use('/api/v1/students', StudentRoutes)
-app.use('/api/v1/', StudentRoutes)
-app.use('/api/v1/users', UserRoutes)
+// app.use('/api/v1/students', StudentRoutes)
+// app.use('/api/v1/users', UserRoutes)
+
+app.use('/api/v1', router)
+// app.use('/api/v1/', UserRoutes)
+// app.use('/api/v1/', StudentRoutes)
 
 const getHelloController = (req: Request, res: Response) => {
   // const a = 1
@@ -31,5 +36,7 @@ const getHelloController = (req: Request, res: Response) => {
 app.get('/', getHelloController)
 
 app.use(globalErrorHandler)
+// not found
+app.use(notFound)
 
 export default app
