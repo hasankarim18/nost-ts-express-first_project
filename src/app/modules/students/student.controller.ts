@@ -6,7 +6,7 @@ import catchAsync from '../../utils/catAsync'
 // writting a higher order asynchronous code for try catch
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars, no-unused-vars
-const getSingleStudent = catchAsync(async (req, res, next) => {
+const getSingleStudent = catchAsync(async (req, res) => {
   const { studentId } = req.params
   const result = await studentServices.getSingleStudentFromDb(studentId)
 
@@ -28,7 +28,7 @@ const getSingleStudent = catchAsync(async (req, res, next) => {
 })
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars, no-unused-vars
-const getAllStudents = catchAsync(async (req, res, next) => {
+const getAllStudents = catchAsync(async (req, res) => {
   const result = await studentServices.getAllStudentsFromDb()
   sendResponse(res, {
     success: true,
@@ -39,7 +39,7 @@ const getAllStudents = catchAsync(async (req, res, next) => {
 })
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars, no-unused-vars
-const deleteStudent = catchAsync(async (req, res, next) => {
+const deleteStudent = catchAsync(async (req, res) => {
   const { studentId } = req.params
   const result = await studentServices.deleteSingleStudentFromDb(studentId)
   sendResponse(res, {

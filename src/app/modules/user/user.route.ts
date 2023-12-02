@@ -1,8 +1,13 @@
-import express from 'express'
+import express, { NextFunction, Request, Response } from 'express'
 import { UserController } from './user.controller'
 
 const router = express.Router()
 
-router.post('/create-users', UserController.createStudent)
+const middleware = (req: Request, res: Response, next: NextFunction) => {
+  console.log(' I am a middleware')
+  next()
+}
+
+router.post('/create-users', middleware, UserController.createStudent)
 
 export const UserRoutes = router
