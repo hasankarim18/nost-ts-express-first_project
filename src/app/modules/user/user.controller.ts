@@ -11,7 +11,6 @@ import httpStatus from 'http-status'
 const createStudent: RequestHandler = async (req, res, next) => {
   try {
     const { password, student: studentData } = req.body
-    //  const zodParsedData = UserValidation.userValidationSchema.parse(userData)
 
     const result = await UserServices.createStudentIntoDb(password, studentData)
     sendResponse(res, {

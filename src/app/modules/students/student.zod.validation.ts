@@ -57,28 +57,31 @@ const BloodGroupValidationSchema = z.object({
 })
 
 // Define a schema for the entire Student
-export const StudentValidationSchema = z.object({
-  id: z.string().min(1, { message: 'Student ID is required' }),
-  password: z
-    .string()
-    .max(20, { message: 'Zod says password can not be more than 20' }),
-  name: UserNameValidationSchema.required(),
-  gender: z.enum(['male', 'female', 'other']),
-  email: z.string().email({ message: 'Email is not valid' }),
-  phone: z.string().min(1, { message: 'Phone number is required' }),
-  bloodGroup: BloodGroupValidationSchema.required(),
-  presentAddress: z.string(),
-  permanantAddress: z
-    .string()
-    .min(1, { message: 'Permanent address is required' }),
-  guardian: GuardianValidationSchema.required(),
-  localGuardian: LocalGuardianValidationSchema.required(),
-  profileImg: z.string(),
-  isActive: z.enum(['active', 'inactive']).default('active'),
-  isDeleted: z.boolean(),
+export const createStudentValidationSchema = z.object({
+  body: z.object({
+    password: z
+      .string()
+      .max(20, { message: 'Zod says password can not be more than 20' }),
+    student: z.object({
+      name: UserNameValidationSchema.required(),
+      gender: z.enum(['male', 'female', 'other']),
+      email: z.string().email({ message: 'Email is not valid' }),
+      phone: z.string().min(1, { message: 'Phone number is required' }),
+      bloodGroup: BloodGroupValidationSchema.required(),
+      presentAddress: z.string(),
+      permanantAddress: z
+        .string()
+        .min(1, { message: 'Permanent address is required' }),
+      guardian: GuardianValidationSchema.required(),
+      localGuardian: LocalGuardianValidationSchema.required(),
+      profileImg: z.string(),
+    }),
+  }),
 })
 
-export default StudentValidationSchema
+export const StudentValidation = {
+  createStudentValidationSchema,
+}
 
 // // Example usage:
 // const studentData = {

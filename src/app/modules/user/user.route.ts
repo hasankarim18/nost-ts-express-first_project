@@ -1,13 +1,16 @@
-import express, { NextFunction, Request, Response } from 'express'
+import express from 'express'
 import { UserController } from './user.controller'
+import { StudentValidation } from '../students/student.zod.validation'
+import { ValidateRequest } from '../../middlewares/validateRequest'
 
 const router = express.Router()
 
-const middleware = (req: Request, res: Response, next: NextFunction) => {
-  console.log(' I am a middleware')
-  next()
-}
-
-router.post('/create-users', middleware, UserController.createStudent)
+router.post(
+  '/create-users',
+  ValidateRequest.validateStudentCreanteRequest(
+    StudentValidation.createStudentValidationSchema,
+  ),
+  UserController.createStudent,
+)
 
 export const UserRoutes = router
