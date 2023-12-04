@@ -40,6 +40,7 @@ export type TStudent = {
   guardian: TGuardian
   localGuardian: TLocalGuardian
   profileImg?: string
+  dateOfBirth?: Date
   isDeleted: boolean
 }
 

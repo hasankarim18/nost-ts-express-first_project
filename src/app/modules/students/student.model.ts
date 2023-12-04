@@ -147,6 +147,7 @@ const studentSchema = new Schema<TStudent, StudentModel>(
       required: true,
     },
     profileImg: { type: String },
+    dateOfBirth: { type: Date },
     isDeleted: {
       type: Boolean,
       default: false,
@@ -206,4 +207,5 @@ studentSchema.statics.isUserExists = async function (id: string) {
 //   return existingUser
 // }
 
+/** model  */
 export const Student = model<TStudent, StudentModel>('Student', studentSchema)

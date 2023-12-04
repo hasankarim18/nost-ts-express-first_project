@@ -2,9 +2,9 @@ import { TStudent } from './student.interface'
 import { Student } from './student.model'
 
 const createStudentIntoDb = async (studentData: TStudent) => {
-  if (await Student.isUserExists(studentData.id)) {
-    throw new Error(`Students already exists at id:  ${studentData.id}`)
-  }
+  // if (await Student.isUserExists(studentData.id)) {
+  //   throw new Error(`Students already exists at id:  ${studentData.id}`)
+  // }
 
   // same can be done by instance
   // const student = new Student(studentData)
