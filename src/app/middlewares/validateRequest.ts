@@ -1,7 +1,7 @@
 import { AnyZodObject } from 'zod'
 import { NextFunction, Request, Response } from 'express'
 
-const validateStudentCreanteRequest = (schema: AnyZodObject) => {
+const ValidateRequest = (schema: AnyZodObject) => {
   return async (req: Request, res: Response, next: NextFunction) => {
     try {
       // if everything is okay call next()
@@ -15,6 +15,4 @@ const validateStudentCreanteRequest = (schema: AnyZodObject) => {
   }
 }
 
-export const ValidateRequest = {
-  validateStudentCreanteRequest,
-}
+export default ValidateRequest
