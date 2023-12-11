@@ -1,3 +1,4 @@
+import mongoose from 'mongoose'
 import config from '../../config'
 import { AcademicSemester } from '../academicSemester/academicSemester.model'
 import { TStudent } from '../students/student.interface'
@@ -6,6 +7,8 @@ import { TUser } from './user.interface'
 // import { TUser } from './user.interface'
 import { User } from './user.model'
 import { generateStudentId } from './user.util'
+import AppError from '../../errors/AppError'
+import httpStatus from 'http-status'
 
 const createStudentIntoDb = async (password: string, payload: TStudent) => {
   // create a user object
@@ -24,28 +27,42 @@ const createStudentIntoDb = async (password: string, payload: TStudent) => {
     payload.admissionSemester,
   )
 
-  // condition check is required
-  if (admissionSemester !== null) {
-    userData.id = await generateStudentId(admissionSemester)
-  }
+  /** Transaction and rollback */
+  const session = await mongoose.startSession()
 
-  // create a user
+  try {
+    session.startTransaction()
+    if (admissionSemester !== null) {
+      userData.id = await generateStudentId(admissionSemester)
+    }
 
-  const newUser = await User.create(userData)
+    // create a user(transaction-1)
+    const newUser = await User.create([userData], { session }) // array
 
-  // create a student
-  if (Object.keys(newUser).length) {
+    // create a student
+    if (!newUser.length) {
+      throw new AppError(httpStatus.BAD_REQUEST, 'Failed to create user')
+    }
     // set id , _id as user
-    payload.id = newUser.id
-    payload.user = newUser._id // reference id
-    const newStudent = await Student.create(payload)
+    payload.id = newUser[0].id
+    payload.user = newUser[0]._id // reference id
+
+    // create a student(transaction-2)
+    const newStudent = await Student.create([payload], { session })
+
+    if (!newStudent.length) {
+      throw new AppError(httpStatus.BAD_REQUEST, 'Failed to create student')
+    }
+
+    // transaction successful
+    await session.commitTransaction()
+    await session.endSession()
+    // returning the result
     return newStudent
+  } catch (error) {
+    await session.abortTransaction()
+    await session.endSession()
   }
-  /** this is writting operation into two separate collection in a single route hit.
-   * So transition and rollback will be needed.
-   * Transition and rollback will be provided next
-   *
-   */
 }
 
 export const UserServices = {
