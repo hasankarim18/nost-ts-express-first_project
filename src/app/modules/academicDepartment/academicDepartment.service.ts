@@ -25,7 +25,7 @@ const updateAcademicDepartmentIntoDb = async function (
 
 // get all academic
 const getAcademicDepartmentFromDb = async function () {
-  const result = await AcademicDepartment.find()
+  const result = await AcademicDepartment.find().populate('academicFaculty')
   return result
 }
 // get single academic
@@ -34,7 +34,7 @@ const getSingleAcademicDepartmentFromDb = async function (
 ) {
   const result = AcademicDepartment.findOne({
     _id: new ObjectId(departmentId),
-  })
+  }).populate('academicFaculty')
   return result
 }
 

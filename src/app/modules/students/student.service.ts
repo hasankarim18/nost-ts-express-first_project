@@ -23,6 +23,13 @@ const createStudentIntoDb = async (studentData: TStudent) => {
 // get all students
 const getAllStudentsFromDb = async () => {
   const result = await Student.find()
+    .populate('admissionSemester')
+    .populate({
+      path: 'academicDepartment',
+      populate: {
+        path: 'academicFaculty',
+      },
+    })
   return result
 }
 
@@ -30,11 +37,19 @@ const getAllStudentsFromDb = async () => {
 
 const getSingleStudentFromDb = async (id: string) => {
   // const result = await Student.findOne({ id: id })
-  const result = await Student.aggregate([{ $match: { id: id } }])
+  const result = await Student.findOne({ id: id })
+    .populate('admissionSemester')
+    .populate({
+      path: 'academicDepartment',
+      populate: {
+        path: 'academicFaculty',
+      },
+    })
   return result
 }
 const deleteSingleStudentFromDb = async (id: string) => {
   const result = await Student.updateOne({ id: id }, { isDeleted: true })
+
   return result
 }
 

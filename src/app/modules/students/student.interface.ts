@@ -42,6 +42,7 @@ export type TStudent = {
   profileImg?: string
   dateOfBirth?: Date
   admissionSemester: Types.ObjectId
+  academicDepartment: Types.ObjectId
   isDeleted: boolean
 }
 
