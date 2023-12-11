@@ -30,6 +30,7 @@ const createStudentIntoDb = async (password: string, payload: TStudent) => {
   }
 
   // create a user
+
   const newUser = await User.create(userData)
 
   // create a student
