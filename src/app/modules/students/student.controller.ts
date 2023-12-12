@@ -11,7 +11,11 @@ const getSingleStudent = catchAsync(async (req, res) => {
   const result = await studentServices.getSingleStudentFromDb(studentId)
 
   //  console.log(result)
-  if (result === null || undefined || result.length === 0) {
+  if (
+    result === null ||
+    undefined
+    // || result.length === 0
+  ) {
     res.status(404).send({
       success: false,
       message: 'Student Not Existed',
@@ -49,9 +53,25 @@ const deleteStudent = catchAsync(async (req, res) => {
     data: result,
   })
 })
+/**
+ *
+ * update student
+ */
+const updateStudent = catchAsync(async (req, res) => {
+  const { studentId } = req.params
+  const { student } = req.body
+  const result = await studentServices.updateStudentIntoDb(studentId, student)
+  sendResponse(res, {
+    success: true,
+    statusCode: httpStatus.OK,
+    message: 'Student updated Successfully',
+    data: result,
+  })
+})
 
 export const studentController = {
   getAllStudents,
   getSingleStudent,
   deleteStudent,
+  updateStudent,
 }

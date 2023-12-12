@@ -76,7 +76,7 @@ const deleteSingleStudentFromDb = async (id: string) => {
     )
 
     if (!deletedUser) {
-      throw new AppError(httpStatus.BAD_REQUEST, 'Failed to delete User')
+      throw new AppError(httpStatus.BAD_REQUEST, 'Failed to delete Student')
     }
 
     await session.commitTransaction()
@@ -86,7 +86,59 @@ const deleteSingleStudentFromDb = async (id: string) => {
   } catch (error) {
     await session.abortTransaction()
     await session.endSession()
+    throw new AppError(httpStatus.BAD_REQUEST, 'Student creating failed')
   }
+}
+
+/**
+ * Update students
+ */
+
+const updateStudentIntoDb = async (
+  studentId: string,
+  payload: Partial<TStudent>,
+) => {
+  const { name, guardian, localGuardian, ...remainingStudentData } = payload
+  const modifiedUpdatedData: Record<string, unknown> = {
+    ...remainingStudentData,
+  }
+  /*
+  gurdian: {
+    fatherOcupation:"Teacher"
+  }
+
+  gurdian.fatherOcupation = Teacher
+  name.firstName = 'Mezba'
+  name.l
+  
+  */
+
+  if (name && Object.keys(name).length) {
+    for (const [key, value] of Object.entries(name)) {
+      modifiedUpdatedData[`name.${key}`] = value
+    }
+  }
+  if (guardian && Object.keys(guardian).length) {
+    for (const [key, value] of Object.entries(guardian)) {
+      modifiedUpdatedData[`guardian.${key}`] = value
+    }
+  }
+  if (localGuardian && Object.keys(localGuardian).length) {
+    for (const [key, value] of Object.entries(localGuardian)) {
+      modifiedUpdatedData[`localGuardian.${key}`] = value
+    }
+  }
+  //console.log(modifiedUpdatedData)
+
+  const result = await Student.findOneAndUpdate(
+    { id: studentId },
+    modifiedUpdatedData,
+    {
+      new: true,
+      runValidators: true,
+    },
+  )
+  return result
 }
 
 export const studentServices = {
@@ -94,4 +146,5 @@ export const studentServices = {
   getAllStudentsFromDb,
   getSingleStudentFromDb,
   deleteSingleStudentFromDb,
+  updateStudentIntoDb,
 }
