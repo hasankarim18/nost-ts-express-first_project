@@ -26,7 +26,6 @@ const createStudentIntoDb = async (studentData: TStudent) => {
 
 // get all students
 const getAllStudentsFromDb = async (query: Record<string, unknown>) => {
-  console.log('base query::', query)
   const queryObj = { ...query } // copy of query
   const studentSearchableField: string[] = [
     'email',
@@ -52,8 +51,9 @@ const getAllStudentsFromDb = async (query: Record<string, unknown>) => {
   })
 
   // filtering
-  const excludeFields = ['searchTerms', 'sort', 'limit']
+  const excludeFields = ['searchTerms', 'sort', 'limit', 'page', 'fields']
   excludeFields.forEach(el => delete queryObj[el])
+  console.log({ query }, { queryObj })
 
   const filterQuery = searchQuery
     .find(queryObj)
@@ -72,16 +72,34 @@ const getAllStudentsFromDb = async (query: Record<string, unknown>) => {
   }
 
   const sortQuery = filterQuery.sort(sort)
-
+  let page = 1
   let limit = 100
+  let skip = 0
 
   if (query.limit) {
-    limit = query.limit as number
+    limit = Number(query.limit) as number
   }
 
-  const limitQuery = sortQuery.limit(limit)
+  if (query.page) {
+    page = Number(query.page)
+    skip = (page - 1) * limit
+  }
 
-  return limitQuery
+  const paginateQuery = sortQuery.skip(skip)
+
+  const limitQuery = paginateQuery.limit(limit)
+
+  // fieldLimiting
+
+  let fields = '-__v'
+  // fields: 'name,email' -----> 'name email'
+  if (query.fields) {
+    fields = (query.fields as string).split(',').join(' ')
+  }
+
+  const fieldQuery = await limitQuery.select(fields)
+
+  return fieldQuery
 }
 
 // get single student
