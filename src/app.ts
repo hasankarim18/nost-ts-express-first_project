@@ -25,6 +25,11 @@ app.use('/api/v1', router)
 // app.use('/api/v1/', UserRoutes)
 // app.use('/api/v1/', StudentRoutes)
 
+const test = async (req: Request, res: Response) => {
+  // Promise.reject()
+  res.send('Hello Ph university test')
+}
+
 const getHelloController = (req: Request, res: Response) => {
   // const a = 1
 
@@ -33,7 +38,7 @@ const getHelloController = (req: Request, res: Response) => {
   })
 }
 
-app.get('/', getHelloController)
+app.get('/', test)
 
 app.use(globalErrorHandler)
 // not found

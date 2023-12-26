@@ -33,7 +33,8 @@ const getSingleStudent = catchAsync(async (req, res) => {
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars, no-unused-vars
 const getAllStudents = catchAsync(async (req, res) => {
-  const result = await studentServices.getAllStudentsFromDb()
+  // console.log(req.query)
+  const result = await studentServices.getAllStudentsFromDb(req.query)
   sendResponse(res, {
     success: true,
     statusCode: httpStatus.OK,
