@@ -4,6 +4,8 @@ import { Student } from './student.model'
 import AppError from '../../errors/AppError'
 import { User } from '../user/user.model'
 import httpStatus from 'http-status'
+import QueryBuilder from '../../builder/QueryBuilder'
+import { studentSearchableField } from './student.constant'
 
 const createStudentIntoDb = async (studentData: TStudent) => {
   // if (await Student.isUserExists(studentData.id)) {
@@ -24,8 +26,13 @@ const createStudentIntoDb = async (studentData: TStudent) => {
   return result
 }
 
-// get all students
-const getAllStudentsFromDb = async (query: Record<string, unknown>) => {
+/**
+ *
+ *  get all students done with raw method it is save only for educational purpoe
+ *
+ *   */
+// eslint-disable-next-line no-unused-vars, @typescript-eslint/no-unused-vars
+const getAllStudentsFromDbRaw = async (query: Record<string, unknown>) => {
   const queryObj = { ...query } // copy of query
   const studentSearchableField: string[] = [
     'email',
@@ -53,7 +60,6 @@ const getAllStudentsFromDb = async (query: Record<string, unknown>) => {
   // filtering
   const excludeFields = ['searchTerms', 'sort', 'limit', 'page', 'fields']
   excludeFields.forEach(el => delete queryObj[el])
-  console.log({ query }, { queryObj })
 
   const filterQuery = searchQuery
     .find(queryObj)
@@ -100,6 +106,28 @@ const getAllStudentsFromDb = async (query: Record<string, unknown>) => {
   const fieldQuery = await limitQuery.select(fields)
 
   return fieldQuery
+}
+
+/**
+ * Query using queryBuilder
+ */
+const getAllStudentsFromDb = async (query: Record<string, unknown>) => {
+  // {email:{ $regex: query.searchTerm, $options: i }}
+  // {presentAddress:{ $regex: query.searchTerm, $options: i }}
+  // {name.firstName:{ $regex: query.searchTerm, $options: i }}
+
+  const studentQuery = new QueryBuilder(Student.find(), query)
+    .search(studentSearchableField)
+    .filter()
+    .sort()
+    .paginate()
+    .fields()
+
+  const result = await studentQuery.modelQuery
+
+  return result
+
+  // end
 }
 
 // get single student
